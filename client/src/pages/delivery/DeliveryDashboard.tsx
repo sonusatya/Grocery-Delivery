@@ -1,14 +1,25 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PackageIcon, NavigationIcon } from "lucide-react";
 import OtpModal from "../../components/Delivery/OtpModal";
 import CancelModal from "../../components/Delivery/CancelModal";
 import DeliveryOrderCard from "../../components/Delivery/DeliveryOrderCard";
 import Loading from "../../components/Loading";
 import type { Order } from "../../types";
-import { dummyDashboardOrdersData } from "../../assets/assets";
+
+
+import toast from "react-hot-toast";
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5000/api";
+
+const getAuthHeaders = ()=>({
+    headers: {Authorization: `Bearer ${localStorage.getItem("delivery_token")}`}
+})
 
 export default function DeliveryDashboard() {
 
+    const navigate = useNavigate();
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState<"active" | "completed">("active");
@@ -22,39 +33,126 @@ export default function DeliveryDashboard() {
     // Cancel modal
     const [cancelModal, setCancelModal] = useState<string | null>(null);
     const [cancelReason, setCancelReason] = useState("");
+    const watchIdRef = useRef<number | null>(null)
 
-    const fetchOrders = async () => {
+    // Session expired / account deactivated → back to login
+    const handleAuthError = useCallback((error: any) => {
+        const status = error?.response?.status;
+        if (status === 401 || status === 403) {
+            localStorage.removeItem("delivery_token");
+            localStorage.removeItem("delivery_partner");
+            toast.error(error.response?.data?.message || "Session expired, please login again");
+            navigate("/delivery/login");
+            return true;
+        }
+        return false;
+    }, [navigate]);
+
+    const fetchOrders = useCallback(async () => {
         setLoading(true);
-        setOrders(dummyDashboardOrdersData as any);
-        setLoading(false);
-    };
+       
+        try {
+            const { data } = await axios.get(`${API_URL}/delivery/my-deliveries?status=${tab}`, getAuthHeaders())
+            setOrders(data.orders)
+        } catch (error: any) {
+            if (!handleAuthError(error)) {
+                toast.error(error.response?.data?.message || "Failed to load deliveries");
+            }
+        }finally{
+            setLoading(false)
+        }
+        
+    }, [tab, handleAuthError]);
 
     useEffect(() => {
         fetchOrders();
-    }, [tab]);
+    }, [fetchOrders]);
+
+    // send location every 10s for active deliveries
+
+    useEffect(()=>{
+       const activeOrders = orders.filter((o)=> ["Assigned", "Packed", "Out for Delivery"].includes(o.status));
+
+       if(activeOrders.length === 0 || !tracking){
+         if(watchIdRef.current !== null){
+            navigator.geolocation.clearWatch(watchIdRef.current);
+            watchIdRef.current = null;
+         } 
+         return;
+       }
+       const sendLocation = (pos: GeolocationPosition)=>{
+        const {latitude: lat, longitude: lng} = pos.coords;
+        activeOrders.forEach((order)=>{
+            axios.put(`${API_URL}/delivery/my-deliveries/${order.id}/location`, {lat, lng}, getAuthHeaders()).catch(()=>{})
+        });
+        
+       }
+        watchIdRef.current = navigator.geolocation.watchPosition(sendLocation, ()=>{}, {
+            enableHighAccuracy: true,
+            maximumAge: 10000,
+        })
+
+        // Also send on interval for more consistent updates
+
+        const interval = setInterval(()=>{
+            navigator.geolocation.getCurrentPosition(sendLocation, ()=>{}, {enableHighAccuracy: true})
+        },10000)
+        return ()=>{
+            if(watchIdRef.current !== null){
+                watchIdRef.current = null;
+            }
+            clearInterval(interval)
+        }
+
+       
+    }, [orders, tracking])
 
     const handleUpdateStatus = async (orderId: string, status: string) => {
-        console.log(orderId, status);
+        try {
+            await axios.put(`${API_URL}/delivery/my-deliveries/${orderId}/status`, { status }, getAuthHeaders())
+            toast.success(`Status updated to ${status}`)
+            fetchOrders()
+        } catch (error: any) {
+            if (!handleAuthError(error)) {
+                toast.error(error.response?.data?.message || "Failed to update status")
+            }
+        }
     };
 
     const handleComplete = async () => {
         if (!otpModal || !otp) return;
         setSubmitting(true);
-        setTimeout(() => {
-            setSubmitting(false);
+        try {
+            await axios.put(`${API_URL}/delivery/my-deliveries/${otpModal}/complete`, { otp }, getAuthHeaders())
+            toast.success("Delivery completed")
             setOtpModal(null);
             setOtp("");
-        }, 1000);
+            fetchOrders()
+        } catch (error: any) {
+            if (!handleAuthError(error)) {
+                toast.error(error.response?.data?.message || "Failed to complete delivery")
+            }
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const handleCancel = async () => {
-        if (!cancelModal) return;
+        if (!cancelModal || !cancelReason.trim()) return;
         setSubmitting(true);
-        setTimeout(() => {
-            setSubmitting(false);
+        try {
+            await axios.put(`${API_URL}/delivery/my-deliveries/${cancelModal}/cancel`, { reason: cancelReason }, getAuthHeaders())
+            toast.success("Delivery cancelled")
             setCancelModal(null);
             setCancelReason("");
-        }, 1000);
+            fetchOrders()
+        } catch (error: any) {
+            if (!handleAuthError(error)) {
+                toast.error(error.response?.data?.message || "Failed to cancel delivery")
+            }
+        } finally {
+            setSubmitting(false);
+        }
     }
 
     return (
@@ -85,7 +183,7 @@ export default function DeliveryDashboard() {
                 </div>
             ) : (
                 <div className="space-y-4">
-                    {orders.map((order) => <DeliveryOrderCard key={order._id} order={order} tab={tab} handleUpdateStatus={handleUpdateStatus} setOtpModal={setOtpModal} setCancelModal={setCancelModal} />)}
+                    {orders.map((order) => <DeliveryOrderCard key={order.id} order={order} tab={tab} handleUpdateStatus={handleUpdateStatus} setOtpModal={setOtpModal} setCancelModal={setCancelModal} />)}
                 </div>
             )}
 

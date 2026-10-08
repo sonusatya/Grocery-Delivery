@@ -49,7 +49,7 @@ export const getMyDeliveries = async (req: Request, res: Response) => {
     const where: any = { deliveryPartnerId: req.partner!.id };
 
     if(status === "active") {
-        where.status = { in: ["Assigned", "Picked", "Out for Delivery"] };
+        where.status = { in: ["Assigned", "Packed", "Picked", "Out for Delivery"] };
     }else if(status === "completed") {
         where.status = {in : ["Delivered", "Cancelled"]};
     }
@@ -121,11 +121,15 @@ export const cancelDelivery = async (req: Request, res: Response) => {
         where: { id: req.params.id as string, deliveryPartnerId: req.partner!.id },
     });
 
-    if(order!.status === "Delivered") {
+    if(!order) {
+        return res.status(404).json({ message: "Delivery not found" });
+    }
+
+    if(order.status === "Delivered") {
         return res.status(404).json({ message: "Cannot cancel a delivered order" });
     }
 
-    const history = order!.statusHistory as any[];
+    const history: any[] = Array.isArray(order.statusHistory) ? order.statusHistory : [];
 
     history.push({
         status: "Cancelled",
@@ -133,7 +137,7 @@ export const cancelDelivery = async (req: Request, res: Response) => {
         timestamp: new Date()});
 
         const updatedOrder = await prisma.order.update({
-            where: { id: order!.id },
+            where: { id: order.id },
             data: { status: "Cancelled", statusHistory: history }
         });
 
@@ -148,7 +152,7 @@ export const cancelDelivery = async (req: Request, res: Response) => {
 
 export const updateDeliveryStatus = async (req: Request, res: Response) => {
     const { status } = req.body;
-   const allowedStatus = ["Picked", "Out for Delivery"];
+   const allowedStatus = ["Packed", "Picked", "Out for Delivery"];
 
     if(!allowedStatus.includes(status)) {
         return res.status(400).json({ message: "Invalid status update" });
@@ -158,7 +162,11 @@ export const updateDeliveryStatus = async (req: Request, res: Response) => {
         where: { id: req.params.id as string, deliveryPartnerId: req.partner!.id },
     });
 
-    const history = order!.statusHistory as any[];
+    if(!order) {
+        return res.status(404).json({ message: "Delivery not found" });
+    }
+
+    const history: any[] = Array.isArray(order.statusHistory) ? order.statusHistory : [];
 
     history.push({
         status,
@@ -166,7 +174,7 @@ export const updateDeliveryStatus = async (req: Request, res: Response) => {
         timestamp: new Date()});
 
         const updatedOrder = await prisma.order.update({
-            where: { id: order!.id },
+            where: { id: order.id },
             data: { status, statusHistory: history }
         });
         res.json({order: updatedOrder})

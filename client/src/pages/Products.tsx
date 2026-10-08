@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import type { Product } from "../types";
-import { categoriesData, dummyProducts } from "../assets/assets";
+import { categoriesData } from "../assets/assets";
 import { ChevronDown, Home, SlidersHorizontal, XIcon } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import Loading from "../components/Loading";
 import FilterPanel from "../components/FilterPanel";
+import api from "../config/api";
+import toast from "react-hot-toast";
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -22,13 +24,30 @@ const Products = () => {
   const minPrice = searchParams.get("minPrice") || "";
   const maxPrice = searchParams.get("maxPrice") || "";
 
-  const fetchProduct = async () => {
-    setLoading(true);
-    setProducts(
-      dummyProducts.filter((p) => p.category === category || category === ""),
-    );
-    setLoading(false);
-  };
+  const fetchProduct = useCallback(async () => {
+    setLoading(true)
+    try {
+      const params = new URLSearchParams()
+      if(category) params.set('category', category)
+        if(organic) params.set('organic', organic)
+        if(sort) params.set('sort', sort)
+         if(minPrice) params.set('minPrice', minPrice)
+         if(maxPrice) params.set('maxPrice', maxPrice)
+
+          params.set("page", String(page))
+          params.set("limit", "12")
+
+    const { data } = await api.get(`/products?${params.toString()}`);
+    setProducts(data.products)
+    setTotalPages(data.pages)
+          
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || error?.message);
+      }finally{
+        setLoading(false)
+      }
+   
+  }, [category, organic, sort, minPrice, maxPrice, page]);
 
   const updateFilter = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -48,7 +67,7 @@ const Products = () => {
   const hasFilters = category || organic || minPrice || maxPrice;
   useEffect(() => {
     fetchProduct();
-  }, [category, organic, sort, page, minPrice, maxPrice]);
+  }, [fetchProduct]);
   return (
     <div className="min-h-screen bg-app-cream">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -63,7 +82,7 @@ const Products = () => {
           </span>
         </nav>
         <div className="flex gap-8 xl:gap-10">
-          {/* Sidebar - Destop */}
+          {/* Sidebar - Desktop */}
           <aside className="hidden lg:block w-64 shrink-0">
             <div className="bg-white rounded-2xl p-4 sticky top-24">
              <FilterPanel categories={categoriesData} category={category} organic={organic} minPrice={minPrice} maxPrice={maxPrice} updateFilter={updateFilter} clearFilters={clearFilters} hasFilters={hasFilters} />
@@ -78,7 +97,7 @@ const Products = () => {
                 <h1 className="text-2xl font-semibold text-app-green">
                   {activeCategory ? activeCategory.name : "All Products"}
                 </h1>
-                <p className="text-sm text-top-app-text-light mt-0.5">
+                <p className="text-sm text-app-text-light mt-0.5">
                   {products.length} products found
                 </p>
               </div>
@@ -87,7 +106,7 @@ const Products = () => {
                 {/* Mobile filter toggle */}
                 <button
                   onClick={() => setMobileFiltersOpen(true)}
-                  className="lg:hidden flex items-center gap-2 px-3 py-2 text-sm bg-white rounded-xl border border-app-border hover:bg-app-cream tramsition-colors"
+                  className="lg:hidden flex items-center gap-2 px-3 py-2 text-sm bg-white rounded-xl border border-app-border hover:bg-app-cream transition-colors"
                 >
                   <SlidersHorizontal className="size-4" /> Filters
                 </button>
@@ -128,11 +147,11 @@ const Products = () => {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4gap-4 xl:gap-8">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 xl:gap-8">
                 {products.map(
                   (product) =>
                     product.stock > 0 && (
-                      <ProductCard key={product._id} product={product} />
+                      <ProductCard key={product.id} product={product} />
                     ),
                 )}
               </div>

@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import type { Product } from "../types";
-import { dummyProducts } from "../assets/assets";
+
 import Loading from "../components/Loading";
 import { ArrowLeftIcon, ArrowRightIcon, HomeIcon, LeafIcon, MinusIcon, PlusIcon, ShoppingCartIcon, StarIcon } from "lucide-react";
 import DummyReviewsSection from "../assets/DummyReviewsSection";
 import ProductCard from "../components/ProductCard";
+import api from "../config/api";
 
 const ProductPage = () => {
-  const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "$";
+  const currency = import.meta.env.
+  VITE_CURRENCY_SYMBOL || "$";
   const { id } = useParams();
   const navigate = useNavigate();
   const { items, addToCart, updateQuantity, removeFromCart } = useCart();
@@ -22,29 +24,33 @@ const ProductPage = () => {
     setLoading(true);
     setLocalQuantity(1);
     window.scrollTo(0, 0);
-    const product = dummyProducts.find((p) => p._id === id);
-    setProduct(product!);
-    setRelatedProducts(dummyProducts.filter((p) => p._id !== id));
-    setLoading(false);
+   
+  api.get(`/products/${id}`).then(({data})=>{
+    setProduct(data.product);
+    return api.get(`/products?category=${data.product.category}`)
+  }).then(({data})=>{
+    setRelatedProducts(data.products.filter((p: Product)=> p.id !== id))
+  }).catch(()=> navigate("/products")).finally(()=>setLoading(false))
+    
   }, [id, navigate]);
   if (loading) return <Loading />;
   if (!product) return null;
 
-  const cartItem = items.find((item) => item.product._id === product._id);
+  const cartItem = items.find((item) => item.product.id === product.id);
   const inCart = !!cartItem;
   const displayQuantity = inCart ? cartItem.quantity : localQuantity;
 
 const handleMinus = ()=>{
   if(inCart){
-    if(cartItem.quantity > 1) updateQuantity(product._id, cartItem.quantity - 1)
-      else removeFromCart(product._id)
+    if(cartItem.quantity > 1) updateQuantity(product.id, cartItem.quantity - 1)
+      else removeFromCart(product.id)
   } else{
     setLocalQuantity(Math.max(1, localQuantity -1))
   }
 }
 
 const handlePlus = ()=>{
- if(inCart) updateQuantity(product._id, cartItem.quantity + 1)
+ if(inCart) updateQuantity(product.id, cartItem.quantity + 1)
   else setLocalQuantity(localQuantity + 1)
 }
 
@@ -55,7 +61,7 @@ const handlePlus = ()=>{
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Breadcrub */}
+        {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-app-text-light mb-6">
           <Link to="/" className="hover:text-app-green transition-colors">
             <HomeIcon className="size-4" />
@@ -134,7 +140,7 @@ const handlePlus = ()=>{
                   </div>
                   <span className="text-sm font-medium">{product.rating}</span>
                   <span className="text-sm text-app-text-light">
-                    ({product.reviewCount} reviws)
+                    ({product.reviewCount} reviews)
                   </span>
                 </div>
               )}
@@ -142,7 +148,7 @@ const handlePlus = ()=>{
               {/* Price */}
 
               <div className="flex items-baseline gap-3 mb-5">
-                <span className="text-3xl md: text-4xl font-semibold text-app-green">
+                <span className="text-3xl md:text-4xl font-semibold text-app-green">
                   {currency}{product.price.toFixed(2)}
                 </span>
 
@@ -212,7 +218,7 @@ const handlePlus = ()=>{
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 xl:gap-8">
                {relatedProducts.slice(0,5).map((rp)=> (
-                <ProductCard key={rp._id} product={rp} />
+                <ProductCard key={rp.id} product={rp} />
                ))}
             </div>
           </section>

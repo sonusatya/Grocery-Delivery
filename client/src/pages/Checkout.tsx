@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useCart } from "../context/CartContext";
 
-import { dummyAddressData } from "../assets/assets";
+
 
 import type { Address } from "../types";
 
@@ -21,22 +21,25 @@ import CheckoutAddress from "../components/Checkout/CheckoutAddress";
 import CheckoutPayment from "../components/Checkout/CheckoutPayment";
 
 import CheckoutReview from "../components/Checkout/CheckoutReview";
+import api from "../config/api";
+import toast from "react-hot-toast";
+import { useAuth } from "../context/useAuth";
 
 const Checkout = () => {
   const navigate = useNavigate();
 
   const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "$";
 
-  const { items, cartTotal } = useCart();
+  const { items, cartTotal, clearCart } = useCart();
 
-  const { user } = { user: { addresses: dummyAddressData } };
+  const { user } = useAuth()
 
   const [step, setStep] = useState("address");
 
   const [loading, setLoading] = useState(false);
 
   const [address, setAddress] = useState<Address>({
-    _id: "",
+    id: "",
     label: "Home",
     address: "",
     city: "",
@@ -63,8 +66,30 @@ const Checkout = () => {
 
   const handlePlaceOrder = async () => {
     setLoading(true);
-
-    navigate("/orders");
+    try {
+      const orderData ={
+        items: items.map((item)=>({
+          product:item.product.id,
+          quantity: item.quantity,
+        })),
+        shippingAddress: address,
+        paymentMethod
+      }
+      const { data } = await api.post('/orders', orderData)
+      if(data.url){
+        window.location.href = data.url;
+        return;
+      }
+      clearCart()
+      toast.success("Order placed successfully!");
+      navigate(`/orders/${data.order.id}`)
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || error.message);
+      
+    }finally{
+      setLoading(false);
+      scrollTo(0, 0);
+    }
   };
 
   //populate address from user's default address
@@ -75,7 +100,7 @@ const Checkout = () => {
         user.addresses.find((a) => a.isDefault) || user.addresses[0];
 
       setAddress({
-        _id: defaultAddr?._id,
+        id: defaultAddr?.id,
         label: defaultAddr?.label,
         address: defaultAddr?.address,
         city: defaultAddr?.city,
@@ -86,7 +111,7 @@ const Checkout = () => {
         lng: defaultAddr?.lng,
       });
     }
-  }, []);
+  }, [user]);
 
   if (items.length === 0) {
     return (
@@ -130,11 +155,10 @@ const Checkout = () => {
             <div key={s.key} className="flex items-center gap-2">
               <button
                 onClick={() => setStep(s.key)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                  step === s.key
-                    ? "bg-app-green text-white"
-                    : "bg-white text-app-text-light"
-                }`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${step === s.key
+                  ? "bg-app-green text-white"
+                  : "bg-white text-app-text-light"
+                  }`}
               >
                 <s.icon className="size-4" /> {s.label}
                 {i < steps.length - 1 && (

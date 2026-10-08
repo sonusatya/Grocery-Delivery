@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 import { prisma } from "../config/prisma.js";
 import { inngest } from "../inngest/index.js";
+import Stripe from "stripe";
 
 // Create order
 
@@ -18,7 +19,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
   //Look up actual prices from the database
 
-  const productIds = items.map((i: any) => i.Product);
+  const productIds = items.map((i: any) => i.product);
 
   const products = await prisma.product.findMany({
     where: { id: { in: productIds } },
@@ -31,7 +32,7 @@ export const createOrder = async (req: Request, res: Response) => {
   //check if product is in stock
 
   for (const item of items) {
-    const product = productMap[item.Product];
+    const product = productMap[item.product];
 
     if (!product || (product.stock ?? 0) < item.quantity) {
       return res.status(404).json({ message: "Product out of stock" });
@@ -39,7 +40,7 @@ export const createOrder = async (req: Request, res: Response) => {
   }
 
   const orderItems = items.map((item: any) => {
-    const dbProduct = productMap[item.Product];
+    const dbProduct = productMap[item.product];
 
     if (!dbProduct) throw new Error(`Product ${item.Product} not found`);
 
@@ -85,7 +86,27 @@ export const createOrder = async (req: Request, res: Response) => {
   });
 
   if (paymentMethod === "card") {
-    // strip payment link
+   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
+// create session
+const session = await stripe.checkout.sessions.create({
+  success_url: `${req.headers.origin}/orders?clearCart=true`,
+   cancel_url: `${req.headers.origin}/checkout`,
+  line_items: [
+    {
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name: "Payment Groceries"
+        },
+        unit_amount: Math.round(total * 100)
+      },
+      quantity: 1,
+    },
+  ],
+  mode: 'payment',
+  metadata: {orderId: order.id}
+});
+return res.json({url: session.url})
   }
 
   res.json({ order });
@@ -102,7 +123,7 @@ export const createOrder = async (req: Request, res: Response) => {
 // Send stock update events for each product in the order 
 
 for(const item of orderItems){
-    await inngest.send({name: "inventory/stock.updated", data: {productId: item.Product}})
+    await inngest.send({name: "inventory/stock.updated", data: {productId: item.product}})
 }
 
 await inngest.send({name: "order/place", data: {orderId: order.id}})

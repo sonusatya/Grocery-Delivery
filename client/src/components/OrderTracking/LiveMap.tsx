@@ -5,6 +5,15 @@ import L from "leaflet";
 import { useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 
+// Component to re-center map when location changes
+function MapUpdater({ center }: { center: [number, number] }) {
+    const map = useMap();
+    useEffect(() => {
+        map.setView(center, map.getZoom());
+    }, [center, map]);
+    return null;
+}
+
 export default function LiveMap({ order, liveLocation }: { order: any, liveLocation: any }) {
 
     // Custom delivery truck icon
@@ -22,15 +31,6 @@ export default function LiveMap({ order, liveLocation }: { order: any, liveLocat
         iconAnchor: [16, 32],
         popupAnchor: [0, -32],
     });
-
-    // Component to re-center map when location changes
-    function MapUpdater({ center }: { center: [number, number] }) {
-        const map = useMap();
-        useEffect(() => {
-            map.setView(center, map.getZoom());
-        }, [center, map]);
-        return null;
-    }
 
     return (
         <>

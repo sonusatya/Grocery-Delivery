@@ -82,7 +82,7 @@ export const updateDeliveryPartner = async (req: Request, res: Response) => {
     if (name) data.name = name;
     if (phone) data.phone = phone;
     if (vehicleType) data.vehicleType = vehicleType;
-    if (isActive !== undefined) data.isActive = isActive;
+    data.isActive = isActive;
 
     try {
         const partner = await prisma.deliveryPartner.update({
@@ -100,37 +100,51 @@ export const updateDeliveryPartner = async (req: Request, res: Response) => {
 
 export const assignDeliveryPartner = async (req: Request, res: Response) => {
     const { partnerId } = req.body;
+
+    if (!partnerId) {
+        return res.status(400).json({ message: "Please select a delivery partner" });
+    }
+
     const order = await prisma.order.findUnique({
         where: { id: req.params.id as string },
     });
+
+    if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+    }
 
     const partner = await prisma.deliveryPartner.findUnique({
         where: { id: partnerId },
     });
 
+    if (!partner) {
+        return res.status(404).json({ message: "Delivery partner not found" });
+    }
+
     const otp = String(Math.floor(100000 + Math.random() * 900000));
 
-    let status = order!.status;
+    let status = order.status;
 
-    const history: any[] = Array.isArray(order!.statusHistory) ? order!.statusHistory : [];
-    if(order!.status === "placed" || order!.status === "confirmed") {
+    const history: any[] = Array.isArray(order.statusHistory) ? order.statusHistory : [];
+    if(order.status === "Placed" || order.status === "Confirmed") {
         status = "Assigned";
         history.push({
             status: "Assigned",
-            note: `Assigned to ${partner!.name}`,
+            note: `Assigned to ${partner.name}`,
             timestamp: new Date(),
         });
     }
 
-    await prisma.order.update({
-        where: { id: order!.id },
+    const updatedOrder = await prisma.order.update({
+        where: { id: order.id },
         data: {
-            deliveryPartnerId: partner!.id, deliveryOtp: otp, status, statusHistory: history
-        }
+            deliveryPartnerId: partner.id, deliveryOtp: otp, status, statusHistory: history
+        },
+        include: {
+            user: { select: { name: true, email: true } },
+            deliveryPartner: { select: { name: true, phone: true, email: true } },
+        },
     });
-          res.json({order})   
-
-
-
+    res.json({ order: updatedOrder });
 }
  

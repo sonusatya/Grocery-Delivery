@@ -194,7 +194,7 @@ const autoAssignRider = inngest.createFunction(
       if (!order) return { skipped: true, reason: "Order not found" };
       if (order.deliveryPartnerId)
         return { skipped: true, reason: "Already assigned" };
-      if (["Cancelled", "Delivery"].includes(order.status as string))
+      if (["Cancelled", "Delivered"].includes(order.status as string))
         return { skipped: true, reason: `Order is ${order.status}` };
 
       //Find an active rider not currently delivering
