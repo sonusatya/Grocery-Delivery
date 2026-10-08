@@ -40,9 +40,32 @@ app.use('/api/delivery', deliveryPartnerRouter);
 
 app.use((error: any, req: Request, res: Response, next: NextFunction)=>{
   console.error(error)
-  res.status(500).json({message: error.message})
+
+  // Response already sent (e.g. stream errored) — delegate to Express default handler
+  if (res.headersSent) {
+    return next(error)
+  }
+
+  res.status(500).json({message: error?.message || "Internal server error"})
 })
 
-app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-});
+// Keep the server alive if any non-route async code (Inngest, Stripe SDK,
+// background promises, etc.) rejects — otherwise Node exits and every
+// in-flight request fails with a network error.
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Rejection:", reason)
+})
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error)
+  process.exit(1)
+})
+
+// On Vercel (serverless) the app is exported instead of listening on a port
+if (!process.env.VERCEL) {
+    app.listen(port, () => {
+        console.log(`Server is running at http://localhost:${port}`);
+    });
+}
+
+export default app;

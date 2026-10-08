@@ -47,11 +47,14 @@ const MyOrders = () => {
     if (searchParams.get("clearCart")) {
       clearCart();
 
-      setSearchParams({});
-
-      setTimeout(() => {
-        fetchOrders();
+      // Remove the query param (with replace, so no extra history entry) after
+      // the cart is cleared. The param change re-runs this effect, which then
+      // fetches the orders exactly once.
+      const timer = setTimeout(() => {
+        setSearchParams({}, { replace: true });
       }, 2000);
+
+      return () => clearTimeout(timer);
     } else {
       fetchOrders();
     }
