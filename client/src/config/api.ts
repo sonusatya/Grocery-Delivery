@@ -1,8 +1,12 @@
 import axios from "axios";
 
+// API routes are mounted under /api on the server — make sure the base URL
+// always includes it, even if the env var is set without the /api suffix
+// (e.g. "https://app.vercel.app" -> "https://app.vercel.app/api").
+const configuredBaseUrl = (import.meta.env.VITE_BASE_URL || "").replace(/\/+$/, "")
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL,
+    baseURL: configuredBaseUrl.endsWith("/api") ? configuredBaseUrl : `${configuredBaseUrl}/api`,
     
 })
 

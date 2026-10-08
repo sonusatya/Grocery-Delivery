@@ -11,7 +11,10 @@ import type { Order } from "../../types";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_BASE_URL || "http://localhost:5000/api";
+// API routes are mounted under /api — keep the base URL consistent even if
+// the env var is set without the /api suffix
+const configuredBaseUrl = (import.meta.env.VITE_BASE_URL || "http://localhost:5000/api").replace(/\/+$/, "")
+const API_URL = configuredBaseUrl.endsWith("/api") ? configuredBaseUrl : `${configuredBaseUrl}/api`;
 
 const getAuthHeaders = ()=>({
     headers: {Authorization: `Bearer ${localStorage.getItem("delivery_token")}`}
