@@ -42,7 +42,7 @@ export const createOrder = async (req: Request, res: Response) => {
   const orderItems = items.map((item: any) => {
     const dbProduct = productMap[item.product];
 
-    if (!dbProduct) throw new Error(`Product ${item.Product} not found`);
+    if (!dbProduct) throw new Error(`Product ${item.product} not found`);
 
     return {
       product: dbProduct.id,

@@ -13,7 +13,7 @@ const FlashDeals = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get("/products/flash-deals").then((res)=>setProducts(res.data.products)).catch((error: any)=> toast.error(error.response.data.message || error?.message)).finally(()=> setLoading(false))
+    api.get("/products/flash-deals").then((res)=>setProducts(res.data.products)).catch((error: any)=> toast.error(error?.response?.data?.message || error?.message || "Could not load deals")).finally(()=> setLoading(false))
   },[]);
   return (
     <div className="min-h-screen bg-app-cream">

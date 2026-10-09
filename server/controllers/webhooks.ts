@@ -40,15 +40,36 @@ export const stripeWebhook = async (request: Request, response: Response)=> {
      const session = await stripe.checkout.sessions.list({
         payment_intent: paymentIntentId
      })
+
+     if(session.data.length === 0){
+       console.log(`⚠️ No checkout session found for payment intent ${paymentIntentId}`);
+       return response.json({received: true});
+     }
+
      const {orderId} = session.data[0].metadata as any;
+
+     if(!orderId){
+       console.log(`⚠️ No orderId in session metadata for payment intent ${paymentIntentId}`);
+       return response.json({received: true});
+     }
+
+     // Look up the order first so a duplicate webhook delivery (Stripe retries
+     // on any non-2xx response) cannot double-decrement the stock.
+     const existingOrder = await prisma.order.findUnique({where: {id: orderId}})
+
+     if(!existingOrder){
+       console.log(`⚠️ Order ${orderId} not found for payment intent ${paymentIntentId}`);
+       return response.json({received: true});
+     }
 
      // Mark Payment as paid
      const paidOrder = await prisma.order.update({
         where: {id: orderId},
         data: {isPaid: true}
-     })
+      })
 
-       //Decrease stock
+       //Decrease stock (first delivery of this event only)
+       if(!existingOrder.isPaid){
        const orderItems = (Array.isArray(paidOrder.items)) ? paidOrder.items : [] as any [];
      for (const item of orderItems) {
     await prisma.product.update({
@@ -58,12 +79,13 @@ export const stripeWebhook = async (request: Request, response: Response)=> {
   }
 
   if(paidOrder){
-    await inngest.send({name: "order/placed", data: {orderId}})
+    await inngest.send({name: "order/place", data: {orderId}})
   }
   // Send stock update events for each product in the order
   for(const item of orderItems){
     await inngest.send({name: "inventory/stock.updated", data: {productId: item.product}})
 }
+       }
  break;
 
     case 'payment_intent.canceled':
@@ -76,9 +98,21 @@ export const stripeWebhook = async (request: Request, response: Response)=> {
         payment_intent: paymentIntentFailureId
       })
 
+      if(sessionFailure.data.length === 0){
+        console.log(`⚠️ No checkout session found for failed payment intent ${paymentIntentFailureId}`);
+        return response.json({received: true});
+      }
+
       const failureOrderId = (sessionFailure.data[0].metadata as any).orderId;
 
-      await prisma.order.delete({where: {id: failureOrderId}})
+      if(!failureOrderId){
+        console.log(`⚠️ No orderId in session metadata for failed payment intent ${paymentIntentFailureId}`);
+        return response.json({received: true});
+      }
+
+      // deleteMany instead of delete: a retried webhook must not error out
+      // when the order is already gone.
+      await prisma.order.deleteMany({where: {id: failureOrderId}})
         break;
     }
     

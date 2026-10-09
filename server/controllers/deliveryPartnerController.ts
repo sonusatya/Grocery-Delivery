@@ -98,7 +98,7 @@ export const completeDelivery = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Invalid OTP" });
     }
 
-    const history = order.statusHistory as any[];
+    const history: any[] = Array.isArray(order.statusHistory) ? order.statusHistory : [];
 
     history.push({
         status: "Delivered",
@@ -192,8 +192,12 @@ export const updateLocation = async (req: Request, res: Response) => {
          }
         });
 
+        if(!order) {
+            return res.status(404).json({ message: "Delivery not found" });
+        }
+
         await prisma.order.update({
-            where: { id: order!.id },
+            where: { id: order.id },
             data: {liveLocation: {lat, lng, updatedAt: new Date()}}
         });
         res.json({success: true})

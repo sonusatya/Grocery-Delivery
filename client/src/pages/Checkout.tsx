@@ -124,7 +124,7 @@ const Checkout = () => {
             Add some products to checkout
           </p>
           <button
-            onClick={() => navigate("/product")}
+            onClick={() => navigate("/products")}
             className="px-5 py-2.5 bg-app-green text-white text-sm font-medium rounded-xl hover:bg-app-green-light transition-colors"
           >
             Browse Products
