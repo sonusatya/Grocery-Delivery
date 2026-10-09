@@ -7,7 +7,7 @@ interface Props {
   product: Product;
 }
 const ProductCard = ({ product }: Props) => {
-  const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "₹";
+  const currency = "₹";
   const {addToCart } = useCart()
   const navigate = useNavigate();
 

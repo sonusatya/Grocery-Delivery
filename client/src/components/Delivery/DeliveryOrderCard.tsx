@@ -12,7 +12,7 @@ interface DeliveryOrderCardProps {
 
 export default function DeliveryOrderCard({ order, tab, handleUpdateStatus, setOtpModal, setCancelModal }: DeliveryOrderCardProps) {
 
-    const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "₹";
+    const currency = "₹";
 
     const user = typeof order.user === "object" ? order.user : { name: "Customer", email: "", phone: "" };
 

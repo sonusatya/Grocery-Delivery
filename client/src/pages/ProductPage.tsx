@@ -10,8 +10,7 @@ import ProductCard from "../components/ProductCard";
 import api from "../config/api";
 
 const ProductPage = () => {
-  const currency = import.meta.env.
-  VITE_CURRENCY_SYMBOL || "₹";
+  const currency = "₹";
   const { id } = useParams();
   const navigate = useNavigate();
   const { items, addToCart, updateQuantity, removeFromCart } = useCart();

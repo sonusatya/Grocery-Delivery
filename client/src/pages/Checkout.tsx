@@ -28,7 +28,7 @@ import { useAuth } from "../context/useAuth";
 const Checkout = () => {
   const navigate = useNavigate();
 
-  const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "₹";
+  const currency = "₹";
 
   const { items, cartTotal, clearCart } = useCart();
 
