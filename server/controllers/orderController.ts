@@ -59,9 +59,9 @@ export const createOrder = async (req: Request, res: Response) => {
     0,
   );
 
-  const deliveryFee = subtotal > 20 ? 0 : 1.99;
+  const deliveryFee = subtotal > 499 ? 0 : 49;
 
-  const tax = Math.round(subtotal * 0.08 * 100) / 100;
+  const tax = Math.round(subtotal * 0.05 * 100) / 100;
 
   const total = Math.round((subtotal + deliveryFee + tax) * 100) / 100;
 
@@ -94,7 +94,7 @@ const session = await stripe.checkout.sessions.create({
   line_items: [
     {
       price_data: {
-        currency: "usd",
+        currency: process.env.CURRENCY || "inr",
         product_data: {
           name: "Payment Groceries"
         },

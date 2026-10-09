@@ -28,7 +28,7 @@ import { useAuth } from "../context/useAuth";
 const Checkout = () => {
   const navigate = useNavigate();
 
-  const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "$";
+  const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "₹";
 
   const { items, cartTotal, clearCart } = useCart();
 
@@ -52,9 +52,9 @@ const Checkout = () => {
 
   const [paymentMethod, setPaymentMethod] = useState("card");
 
-  const deliveryFee = cartTotal > 20 ? 0 : 1.99;
+  const deliveryFee = cartTotal > 499 ? 0 : 49;
 
-  const tax = cartTotal * 0.08;
+  const tax = cartTotal * 0.05;
 
   const total = cartTotal + deliveryFee + tax;
 

@@ -11,7 +11,7 @@ import api from "../config/api";
 
 const ProductPage = () => {
   const currency = import.meta.env.
-  VITE_CURRENCY_SYMBOL || "$";
+  VITE_CURRENCY_SYMBOL || "₹";
   const { id } = useParams();
   const navigate = useNavigate();
   const { items, addToCart, updateQuantity, removeFromCart } = useCart();

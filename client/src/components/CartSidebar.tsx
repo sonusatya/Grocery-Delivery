@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRightIcon, MinusIcon, PlusIcon, ShoppingBagIcon, Trash2Icon, XIcon } from "lucide-react";
 
 const CartSidebar = () => {
-  const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "$";
+  const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "₹";
   const {
     items,
     updateQuantity,
@@ -15,7 +15,7 @@ const CartSidebar = () => {
   const navigate = useNavigate();
 
   if (!isCartOpen) return null;
-  const deliveryFee = cartTotal > 20 ? 0 : 1.99;
+  const deliveryFee = cartTotal > 499 ? 0 : 49;
   const grandTotal = cartTotal + deliveryFee;
 
   return (
@@ -111,7 +111,7 @@ const CartSidebar = () => {
                       <span className="font-medium">{deliveryFee === 0 ? <span className="text-app-success">Free</span> : `${currency}${deliveryFee.toFixed(2)}`}</span>
                     </div>
                           
-                          {deliveryFee > 0 && <p className="text-xs text-app-text-light text-center">Free delivery on orders over {currency}20!</p>}
+                          {deliveryFee > 0 && <p className="text-xs text-app-text-light text-center">Free delivery on orders over {currency}499!</p>}
 
                           <div className="flex justify-between text-base font-semibold border-t border-app-border pt-3">
                             <span>Total</span>

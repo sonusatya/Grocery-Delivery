@@ -7,7 +7,7 @@ interface Props {
   product: Product;
 }
 const ProductCard = ({ product }: Props) => {
-  const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "$";
+  const currency = import.meta.env.VITE_CURRENCY_SYMBOL || "₹";
   const {addToCart } = useCart()
   const navigate = useNavigate();
 
@@ -58,7 +58,7 @@ const ProductCard = ({ product }: Props) => {
           <div className="flex items-center gap-1 truncate">
             <span className="text-base font-medium">
               {currency}
-              {product.price.toFixed(1)}
+              {product.price.toFixed(2)}
             </span>
             <span className="text-xs text-app-text-light block">
               /{product.unit}
@@ -66,7 +66,7 @@ const ProductCard = ({ product }: Props) => {
             {product.originalPrice > product.price && (
               <span className="text-xs text-app-text-light line-through ml-1.5">
                 {currency}
-                {product.originalPrice.toFixed(1)}
+                {product.originalPrice.toFixed(2)}
               </span>
             )}
           </div>
