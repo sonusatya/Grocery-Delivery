@@ -16,6 +16,15 @@
     --color-app-error: #ef4444;
     --color-app-warning: #f59e0b;
 
+    /* GrocNest brand - fresh green accents (additive, complements app-green/app-orange) */
+    --color-brand-50: #f0fdf4;
+    --color-brand-100: #dcfce7;
+    --color-brand-300: #86efac;
+    --color-brand-400: #4ade80;
+    --color-brand-500: #16a34a;
+    --color-brand-600: #15803d;
+    --color-brand-700: #166534;
+
     --font-sans: "Outfit", sans-serif;
     --font-serif: "DM Serif Display", serif;
 }
@@ -63,6 +72,32 @@ input:focus {
 
 .dropdown-link {
     @apply flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-500 hover:bg-orange-50/80 hover:text-zinc-900 transition-colors;
+}
+
+/* Navbar link with animated brand underline */
+.nav-link {
+    position: relative;
+    padding: 4px 0;
+    transition: color 0.2s ease;
+}
+
+.nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.25s ease;
+}
+
+.nav-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
 }
 
 /* Animations */

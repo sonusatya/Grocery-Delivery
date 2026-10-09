@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { BikeIcon } from "lucide-react";
 import { heroSectionData } from "../../assets/assets";
 import api from "../../config/api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import Logo from "../../components/Logo";
 
 export default function DeliveryLogin() {
     const navigate = useNavigate()
@@ -40,8 +40,8 @@ export default function DeliveryLogin() {
             {/* Left Side */}
             <div className="hidden lg:flex lg:w-1/2 bg-app-green relative items-center justify-center">
                 <img src={heroSectionData.hero_image} alt="" className="absolute inset-0 object-cover h-full bg-center opacity-10" />
-                <div className="relative text-center px-12">
-                    <h2 className="text-4xl font-semibold text-white mb-4">Delivery Partner Portal</h2>
+                <div className="relative text-center px-6 sm:px-12">
+                    <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-4">Delivery Partner Portal</h2>
                     <p className="text-white/60 font-serif text-xl max-w-sm mx-auto">Manage your deliveries and keep customers happy.</p>
                 </div>
             </div>
@@ -50,9 +50,8 @@ export default function DeliveryLogin() {
             <div className="flex-1 flex-center px-4 py-12 bg-app-cream">
                 <div className="w-full max-w-md">
                     <div className="text-center mb-8">
-                        <div className="flex-center gap-2 mb-4">
-                            <BikeIcon className="size-7 text-app-green" />
-                            <span className="text-2xl font-semibold text-app-green">Instacart</span>
+                        <div className="flex justify-center mb-4">
+                            <Logo size={32} />
                         </div>
                         <h1 className="text-2xl font-semibold text-app-green mb-2">Delivery Partner Login</h1>
                         <p className="text-sm text-app-text-light">Sign in to manage your deliveries</p>

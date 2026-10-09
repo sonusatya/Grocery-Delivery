@@ -13,8 +13,8 @@ const Banner = () => {
   return (
     <div>
       {bannerVisible && (
-        <div className="bg-linear-to-r from-app-green via-emerabld-800 to-app-gren text-white text-xs sm:text-sm relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex-center gap-6">
+        <div className="bg-linear-to-r from-app-green via-app-green-light to-brand-500 text-white text-xs sm:text-sm relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 pr-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-1">
             <div className="flex-center gap-2">
               <TruckIcon className="size-4 shrink-0" />
               <span className="font-medium">

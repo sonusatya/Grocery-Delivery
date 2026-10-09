@@ -19,7 +19,7 @@ const FlashDeals = () => {
     <div className="min-h-screen bg-app-cream">
       {/* Banner */}
       <div className="bg-linear-to-r from-app-orange to-app-orange-dark text-white py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg-px-8 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex-center gap-2 mb-3">
             <Zap className="size-6 fill-white" />
             <h1 className="text-3xl font-semibold">Flash Deal</h1>

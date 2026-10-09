@@ -19,7 +19,7 @@ const Hero = () => {
                 <span className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold text-orange-300">
                     <LeafIcon className="size-3" /> Farm-Fresh & Organic
                 </span>
-                <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-white leading-tight mb-5">Norish your home with <span className="text-orange-300">Earth's finest</span>
+                <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-white leading-tight mb-5">Nourish your home with <span className="text-orange-300">Earth's finest</span>
                 </h1>
                 <p className="text-base text-white/70 leading-relaxed mb-8 max-w-md">{heroSectionData.description}</p>
 

@@ -92,9 +92,9 @@ const Products = () => {
           {/*Main Content */}
           <main className="flex-1">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-2xl font-semibold text-app-green">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div className="min-w-0">
+                <h1 className="text-xl sm:text-2xl font-semibold text-app-green truncate">
                   {activeCategory ? activeCategory.name : "All Products"}
                 </h1>
                 <p className="text-sm text-app-text-light mt-0.5">
@@ -102,7 +102,7 @@ const Products = () => {
                 </p>
               </div>
 
-              <div className="flex flex-col lg:items-center gap-3">
+              <div className="flex items-center gap-3 shrink-0">
                 {/* Mobile filter toggle */}
                 <button
                   onClick={() => setMobileFiltersOpen(true)}

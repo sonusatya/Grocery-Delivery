@@ -1,5 +1,5 @@
 import { TruckIcon, LeafIcon, ClockIcon, ShieldCheckIcon, MapPinIcon, PhoneIcon, MailIcon } from "lucide-react";
-import { SiFacebook, SiX, SiInstagram } from "@icons-pack/react-simple-icons";
+import { SiFacebook, SiX, SiInstagram,   } from "@icons-pack/react-simple-icons";
 import type { Product } from "../types";
 import hero_bg from "./hero_bg.jpeg";
 import delivery_truck from "./delivery_truck.svg";
@@ -13,6 +13,7 @@ import frozen_foods from "./frozen_foods.png";
 import personal_care from "./personal_care.png";
 import baby_care from "./baby_care.png";
 import meat_seafood from "./meat_seafood.png";
+
 
 export const assets = {
     delivery_truck,
@@ -47,17 +48,19 @@ export const deliveryPartnerLoginImage = "https://images.unsplash.com/photo-1610
 
 export const appPromoBannerData = {
     title: "Get fresh groceries in minutes",
-    description: "Download the Instacart app for exclusive deals, real-time tracking, and the freshest selection delivered right to your door.",
+    description: "Download the GrocNest app for exclusive deals, real-time tracking, and the freshest selection delivered right to your door.",
 };
 
 export const footerData = {
     brand: {
-        name: "Instacart",
+        name: "GrocNest",
         description: "Bringing fresh, organic groceries straight from local farms to your doorstep. Nourish your home with Earth's finest.",
         socials: [
-            { icon: SiFacebook, link: "#" },
-            { icon: SiX, link: "#" },
-            { icon: SiInstagram, link: "#" },
+            { icon: SiFacebook, link: "https://www.facebook.com/profile.php?id=61589355483086" },
+            { icon: SiX, link: "https://x.com/Sonu2066405Sonu" },
+            { icon: SiInstagram, link: "https://www.instagram.com/_insta.sonu_a01?obrf=MXJ3ZG1tMnE2aTcydA==" },
+            
+            
         ],
     },
 
@@ -83,13 +86,13 @@ export const footerData = {
     ],
 
     contact: [
-        { icon: MapPinIcon, text: "123 Green Valley Rd, Portland" },
-        { icon: PhoneIcon, text: "+1 (111) 123-4567" },
-        { icon: MailIcon, text: "hello@example.com" },
+        { icon: MapPinIcon, text: "Sector 62, Noida, Uttar Pradesh 201309, India" },
+        { icon: PhoneIcon, text: " +91 7209080805" },
+        { icon: MailIcon, text: "sonusatya@gmail.com" },
     ],
 
     bottom: {
-        copyright: "© 2026 Greatstack. All rights reserved.",
+        copyright: "© 2026 GrocNest. All rights reserved.",
         links: [
             { label: "Privacy Policy", href: "#" },
             { label: "Terms of Service", href: "#" },

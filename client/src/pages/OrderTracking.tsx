@@ -70,9 +70,9 @@ const OrderTracking = () => {
         </button>
 
         {/*order id, date, status */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-semibold text-app-green">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-semibold text-app-green">
               Order #{order!.id.slice(-8).toUpperCase()}
             </h1>
             <p className="text-sm text-app-text-light mt-1">

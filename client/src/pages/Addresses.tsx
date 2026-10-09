@@ -136,8 +136,8 @@ resetForm()
     <div className="min-h-screen bg-app-cream">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/*page header */}
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-semibold text-app-green">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
+          <h1 className="text-xl sm:text-2xl font-semibold text-app-green">
             My Addresses
           </h1>
 

@@ -1,7 +1,8 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { LogOutIcon, TruckIcon } from "lucide-react";
+import { LogOutIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { DeliveryPartner } from "../../types";
+import Logo from "../../components/Logo";
 
 
 export default function DeliveryLayout() {
@@ -31,13 +32,15 @@ export default function DeliveryLayout() {
         <div className="min-h-screen bg-app-cream">
             {/* Top Bar */}
             <header className="bg-white border-b border-app-border sticky top-0 z-40">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <TruckIcon className="size-6 text-app-green" />
-                        <span className="text-lg font-semibold text-app-green">Instacart Delivery</span>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                        <Logo variant="mark" size={26} />
+                        <span className="text-base sm:text-lg font-semibold text-app-green truncate">
+                            GrocNest <span className="hidden sm:inline">Delivery</span>
+                        </span>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-zinc-600">{partner.name}</span>
+                    <div className="flex items-center gap-3 shrink-0">
+                        <span className="text-sm font-medium text-zinc-600 truncate max-w-28 sm:max-w-40">{partner.name}</span>
                         <button onClick={handleLogout} className="p-2 text-zinc-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
                             <LogOutIcon className="size-4" />
                         </button>

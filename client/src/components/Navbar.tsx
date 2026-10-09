@@ -1,6 +1,5 @@
 import {
   ArrowUpRightIcon,
-  BikeIcon,
   ChevronDownIcon,
   LogOutIcon,
   MapPinIcon,
@@ -16,6 +15,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/useAuth";
+import Logo from "./Logo";
 const Navbar = () => {
    const {user,logout} = useAuth()
   const { cartCount, setIsCartOpen } = useCart()
@@ -38,34 +38,34 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-white sticky top-0 z-50 border-app-border pr-8">
+    <nav className="bg-white sticky top-0 z-50 border-b border-app-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 gap-4">
         {/* Logo */}
-        <Link
-          to="/"
-          className="flex items-center gap-2 text-[22px] font-medium shrink-0"
-        >
-          <BikeIcon size={24} /> Instacart
-        </Link>
+        <Logo size={30} />
+
         <div className="w-full flex items-center justify-end gap-4 lg:gap-10">
           {/* Nav Links - Desktop */}
-          <div className="hidden md:flex items-center gap-6 text-sm text-zinc-600">
-            <Link to="/">Home</Link>
-            <Link to="/products">Products</Link>
-            <Link to="/deals" className="text-app-orange">
+          <div className="hidden md:flex items-center gap-7 text-sm text-zinc-600">
+            <Link to="/" className="nav-link hover:text-app-green">
+              Home
+            </Link>
+            <Link to="/products" className="nav-link hover:text-app-green">
+              Products
+            </Link>
+            <Link to="/deals" className="nav-link text-app-orange hover:text-app-orange-dark">
               Deals
             </Link>
           </div>
           {/* Search Bar */}
           <form onSubmit={handleSearch} className="hidden sm:flex flex-1 max-w-sm text-xs sm:text-sm">
             <div className="relative w-full">
-              <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
+              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
               <input
                 type="text"
                 placeholder="Search for groceries..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 p-2 bg-orange-50 rounded-full ring ring-app-orange/15 focus:ring-app-orange/30"
+                className="w-full pl-9 pr-4 py-2 bg-orange-50 rounded-full ring-1 ring-app-orange/15 focus:ring-2 focus:ring-app-orange/40 focus:bg-white transition-all"
               />
             </div>
           </form>
@@ -74,7 +74,8 @@ const Navbar = () => {
           <div className="flex items-center gap-3">
             {/* Cart */}
             <button
-              className="relative p-2 rounded-xl"
+              className="relative p-2 rounded-xl hover:bg-app-cream transition-colors"
+              aria-label="Open cart"
               onClick={() => setIsCartOpen(true)}
             >
               <ShoppingCartIcon className="size-5 text-zinc-900" />
@@ -185,6 +186,20 @@ const Navbar = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Search Bar - Mobile (below sm) */}
+      <div className="sm:hidden px-4 pb-3">
+        <form onSubmit={handleSearch} className="relative w-full">
+          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
+          <input
+            type="text"
+            placeholder="Search for groceries..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 text-sm bg-orange-50 rounded-full ring-1 ring-app-orange/15 focus:ring-2 focus:ring-app-orange/40 focus:bg-white transition-all"
+          />
+        </form>
       </div>
     </nav>
   );

@@ -3,12 +3,10 @@ import { useState } from "react";
 
 import { heroSectionData } from "../assets/assets.ts";
 
-import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 
 import {
-  BikeIcon,
   LockIcon,
   MailIcon,
   UserIcon,
@@ -16,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "../context/useAuth";
+import Logo from "../components/Logo";
 
 
 
@@ -59,12 +58,12 @@ const Login = () => {
           className="absolute inset-0 object-cover h-full bg-center opacity-10"
         />
 
-        <div className="relative text-center px-12">
-          <h2 className="text-4xl font-semibold text-white mb-4">
-            Welcome back to Instacart
+        <div className="relative text-center px-6 sm:px-12">
+          <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-4">
+            Welcome back to GrocNest
           </h2>
 
-          <p className="text-white/60 font-serif text-xl max-w-sm-auto">
+          <p className="text-white/60 font-serif text-xl max-w-sm mx-auto">
             Fresh groceries and organic produce, delivered to your doorstep.
           </p>
         </div>
@@ -75,13 +74,9 @@ const Login = () => {
         <div className="w-full max-w-md">
           {/* form header message */}
           <div className="text-center mb-6">
-            <Link to="/" className="inline-flex items-center gap-2 mb-6">
-              <BikeIcon className="size-8 text-app-green" />
-
-              <span className="text-2xl font-semibold text-app-green">
-                Instacart
-              </span>
-            </Link>
+            <div className="flex justify-center mb-6">
+              <Logo size={34} />
+            </div>
 
             <h1 className="text-2xl font-semibold text-app-green mb-2">
               {isLoginState

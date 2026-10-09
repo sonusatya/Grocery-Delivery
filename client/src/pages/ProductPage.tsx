@@ -62,7 +62,7 @@ const handlePlus = ()=>{
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-app-text-light mb-6">
+        <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-app-text-light mb-6 min-w-0">
           <Link to="/" className="hover:text-app-green transition-colors">
             <HomeIcon className="size-4" />
           </Link>
@@ -81,7 +81,7 @@ const handlePlus = ()=>{
             {categoryLabel}
           </Link>
           <span>/</span>
-          <span className="text-app-green font-medium truncate max-w-50px">
+          <span className="text-app-green font-medium truncate max-w-40 sm:max-w-56">
             {product.name}
           </span>
         </nav>
@@ -97,11 +97,11 @@ const handlePlus = ()=>{
         <div className="bg-white/50 rounded-2xl overflow-x-hidden">
           <div className="grid md:grid-cols-2 gap-0">
             {/* left side - Images */}
-            <div className="relative flex-center p-8 md:p-12 min-h[320px] md:min-h[480px]">
+            <div className="relative flex-center p-6 sm:p-8 md:p-12 min-h-80 md:min-h-120">
               <img
                 src={product.image}
                 alt={product.name}
-                className="max-h-90px w-auto object-contain"
+                className="max-h-64 md:max-h-96 w-auto object-contain"
               />
 
               <div className="absolute top-5 left-5 flex flex-wrap gap-1.5">
@@ -126,7 +126,7 @@ const handlePlus = ()=>{
               <span className="text-xs font-medium text-app-text-light tracking-wider mb-2 capitalize">
                 {categoryLabel}
               </span>
-              <h1>{product.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-semibold text-app-green leading-snug mb-3">{product.name}</h1>
               {/* Rating */}
               {product.rating > 0 && (
                 <div className="flex items-center gap-2 mb-5">
@@ -177,7 +177,7 @@ const handlePlus = ()=>{
     <button onClick={handleMinus} className="p-3 hover:bg-app-cream transition-colors">
       <MinusIcon className="w-4 h-4" />
     </button>
-         <span className="PX-5 text-sm font-semibold min-w-10px text-center">{displayQuantity}</span>
+         <span className="px-5 text-sm font-semibold min-w-10 text-center">{displayQuantity}</span>
          <button onClick={handlePlus} className="p-3 hover:bg-app-cream transition-colors">
       <PlusIcon className="w-4 h-4" />
     </button>
@@ -191,7 +191,7 @@ const handlePlus = ()=>{
   
   className={`flex-1 py-3 font-semibold rounded-xl transition-colors flex-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] ${inCart ? "bg-app-cream text-app-green border border-app-border" : "bg-app-orange text-white hover:bg-app-orange-dark"}`}>
       <ShoppingCartIcon className="w-4 h-4" />
-      {inCart ? "Added to Cart" : "Added to Cart"}
+      {inCart ? "Added to Cart" : "Add to Cart"}
   </button>
 </div>
 

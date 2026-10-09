@@ -1,4 +1,4 @@
-import { BikeIcon } from "lucide-react";
+import Logo from "./Logo";
 
 import { Link } from "react-router-dom";
 
@@ -14,13 +14,7 @@ const Footer = () => {
           {/* Brand */}
 
           <div>
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <BikeIcon className="size-6 text-white" />
-
-              <span className="text-xl font-semibold">
-                {footerData.brand.name}
-              </span>
-            </Link>
+            <Logo variant="full" tone="light" size={26} className="mb-4" />
 
             <p className="text-sm text-white/70 mb-4">
               {footerData.brand.description}
@@ -31,7 +25,8 @@ const Footer = () => {
                 <a
                   key={i}
                   href={social.link}
-                  className="size-9 rounded-lg bg-white/10 flex-center hover:bg-white/2"
+                  aria-label="GrocNest social link"
+                  className="size-9 rounded-lg bg-white/10 flex-center hover:bg-white/20 hover:-translate-y-0.5 transition-all"
                 >
                   <social.icon className="size-4" />
                 </a>
@@ -95,13 +90,13 @@ const Footer = () => {
         {/* Bottom */}
 
         <div className="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-white/10">{footerData.bottom.copyright}</p>
+          <p className="text-xs text-white/55">{footerData.bottom.copyright}</p>
           <div className="flex gap-4">
             {footerData.bottom.links.map((link, i) => (
               <a
                 key={i}
                 href={link.href}
-                className="text-xs text-white/50 hover:text-white/70"
+                className="text-xs text-white/55 hover:text-white transition-colors"
               >{link.label}
               </a>
             ))}

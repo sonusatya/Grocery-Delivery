@@ -150,14 +150,14 @@ const Checkout = () => {
         </h1>
 
         {/* Steps */}
-        <div className="flex items-center gap-2 mb-8">
+        <div className="flex flex-wrap items-center gap-2 mb-8">
           {steps.map((s, i) => (
             <div key={s.key} className="flex items-center gap-2">
               <button
                 onClick={() => setStep(s.key)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${step === s.key
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-sm font-medium transition-colors ${step === s.key
                   ? "bg-app-green text-white"
-                  : "bg-white text-app-text-light"
+                  : "bg-white text-app-text-light hover:bg-app-cream"
                   }`}
               >
                 <s.icon className="size-4" /> {s.label}
